@@ -43,5 +43,5 @@ async def on_message(message):
     main()
     await message.channel.send(file=discord.File('out.png'))
 
+keep_alive()
 client.run(os.getenv('TOKEN'))
-
