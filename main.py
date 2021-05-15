@@ -1,6 +1,7 @@
 import os
 import discord
 from algorithm import main
+from keep_alive import keep_alive
 import re
 
 client = discord.Client()
