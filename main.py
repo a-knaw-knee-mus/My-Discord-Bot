@@ -1,10 +1,12 @@
 import os
 import discord
+from discord.ext import commands
 from algorithm import main
 from keep_alive import keep_alive
 import re
 
-client = discord.Client()
+client = commands.Bot(command_prefix='$')
+client.remove_command('help')
 
 def read_points(message):
   f = open('data.txt', 'w')  
@@ -30,19 +32,24 @@ async def on_message(message):
 
   msg = message.content
 
-  if msg.startswith("$help"):
-    output = (
-      "```Type '$plot' followed by the triple tilde and begin typing points on"
-      " each new line and finish it with another triple tilde on its own line.\n\n"
-      "You can also type '$plot' followed by 'shift + enter'"
-      " which moves to a new line and begin typing in points as normal.```"
-    )
-    await message.channel.send(output)
-
+  # Can't be a command since I want the user to have to option to type '$plot```' without a space between the two
   if msg.startswith("$plot"):
     read_points(message)
     main() # executes convex hull algorithm
     await message.channel.send(file=discord.File('out.png'))
+    
+  await client.process_commands(message)
 
+@client.command()
+async def help(ctx):
+  myEmbed = discord.Embed(title = 'Help', description = '', color=0x00ff00)
+  desc1 = ("Type '$plot' followed by the triple tilde and begin typing points on"
+            "each new line and finish it with another triple tilde on its own line.")
+  myEmbed.add_field(name="Method 1", value=desc1, inline=False)
+  desc2 = ("Type '$plot' followed by 'shift + enter'"
+          "which moves to a new line and begin typing in points as normal.")
+  myEmbed.add_field(name="Method 2", value=desc2, inline=False)
+  await ctx.message.channel.send(embed=myEmbed)    
+    
 keep_alive()
 client.run(os.getenv('TOKEN'))
