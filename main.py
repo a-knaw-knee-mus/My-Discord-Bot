@@ -6,6 +6,19 @@ import re
 
 client = discord.Client()
 
+def read_points(message):
+  f = open('data.txt', 'w')  
+  vals = message.content.split("\n")
+  for item in vals:
+    point = re.split('\s+', item)
+    try:       
+      x = int(point[0])
+      y = int(point[1])
+      f.write(f'{x} {y}\n')
+    except:
+      pass
+  f.close()
+
 @client.event
 async def on_ready():
   print('Logged in as {0.user}'.format(client))
@@ -27,20 +40,8 @@ async def on_message(message):
     await message.channel.send(output)
 
   if msg.startswith("$plot"):
-    f = open('data.txt', 'w')
-    vals = message.content.split("\n")
-    points = []
-    points.append(vals)
-    for item in vals:
-      point = re.split('\s+', item)
-      try:
-        x = int(point[0])
-        y = int(point[1])
-        f.write(f'{x} {y}\n')
-      except:
-        pass
-    f.close()
-    main()
+    read_points(message)
+    main() # executes convex hull algorithm
     await message.channel.send(file=discord.File('out.png'))
 
 keep_alive()
