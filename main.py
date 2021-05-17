@@ -49,7 +49,7 @@ async def help(ctx):
   desc2 = ("Type '$plot' followed by 'shift + enter'"
           "which moves to a new line and begin typing in points as normal.")
   myEmbed.add_field(name="Method 2", value=desc2, inline=False)
-  await ctx.message.channel.send(embed=myEmbed)    
+  await ctx.send(embed=myEmbed)  
     
 keep_alive()
 client.run(os.getenv('TOKEN'))
