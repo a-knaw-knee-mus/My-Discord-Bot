@@ -42,12 +42,12 @@ async def on_message(message):
 
 @client.command()
 async def help(ctx):
-  myEmbed = discord.Embed(title = 'Help', description = '', color=0x00ff00)
+  myEmbed = discord.Embed(title = 'Help', description = '', color=0xfcba03)
   desc1 = ("Type '$plot' followed by the triple tilde and begin typing points on"
-            "each new line and finish it with another triple tilde on its own line.")
+            " each new line and finish it with another triple tilde on its own line.")
   myEmbed.add_field(name="Method 1", value=desc1, inline=False)
   desc2 = ("Type '$plot' followed by 'shift + enter'"
-          "which moves to a new line and begin typing in points as normal.")
+          " which moves to a new line and begin typing in points as normal.")
   myEmbed.add_field(name="Method 2", value=desc2, inline=False)
   await ctx.send(embed=myEmbed)  
     
