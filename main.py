@@ -7,8 +7,6 @@ from keep_alive import keep_alive
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-url = 'https://www.google.com/search?q=REPLACE&tbm=isch'
-
 client = commands.Bot(command_prefix='$')
 client.remove_command('help')
 
@@ -39,7 +37,7 @@ async def on_message(message):
 
   msg = message.content
 
-  # Cant be a command because i want the option to add ``` right after the $plot with no space
+  # Can't be a command because I want the option to add ``` right after the $plot with no space
   if msg.startswith("$plot"):
     read_points(message)
     main() # executes convex hull algorithm
@@ -57,12 +55,26 @@ async def help(ctx):
   desc2 = ("Type '$plot' followed by 'shift + enter'"
            " which moves to a new line and begin typing in points as normal.")
   myEmbed.add_field(name="Method 2", value=desc2, inline=True)
-  desc3 = "Type '$search' followed by your google images search"
+  desc3 = ("Type '$search' followed by your google images search. You can type a number (1-20) "
+          "after $search to indicate the index number of your google image search "
+          "if you don't simply want the first image. The index is based off of Chromium's "
+          "Google Images and not necessarily your desired browser.")
   myEmbed.add_field(name='GOOGLE IMAGES SEARCH', value=desc3, inline=False)
   await ctx.send(embed=myEmbed)
 
 @client.command()
 async def search(ctx, *, arg):
+  url = 'https://www.google.com/search?q=REPLACE&tbm=isch'
+  text = arg.split(' ')
+  num = 1
+  try:
+    num = int(text[0])
+    if num < 1 or num > 20:
+      await ctx.send("Your index number is out of range.")
+      return
+    arg = arg.partition(' ')[2]
+  except: 
+    pass
   arg = arg.replace(" ", "+")
   link = url.replace("REPLACE", arg)
   chrome_options = Options()
@@ -70,7 +82,7 @@ async def search(ctx, *, arg):
   chrome_options.add_argument('--disable-dev-shm-usage')
   driver = webdriver.Chrome(options=chrome_options)
   driver.get(link)
-  driver.find_element_by_xpath('//*[@id="islrg"]/div[1]/div[1]/a[1]/div[1]/img').screenshot('search.png')
+  driver.find_element_by_xpath(f'//*[@id="islrg"]/div[1]/div[{num}]/a[1]/div[1]/img').screenshot('search.png')
   await ctx.send(file=discord.File('search.png'))
 
 keep_alive()
