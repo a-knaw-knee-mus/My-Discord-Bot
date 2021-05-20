@@ -3,5 +3,8 @@
 - Like any Discord bot, it will react to certain messages with predetermined messages but also have unique functions
 - The first of these functions builds upon the Convex Hull algorithm I created earlier as it sufficed for proof of concept. The user can type '$help' to learn how to it works but the user essentially inputs their set of points and the bot returns the scatter plot that shows all the points, it's perimeter, and value of the perimeter and area, all in one image for a quick representation for the person
 - I originally tried to have the person attach a .txt file and the bot would read the file and execute but I could not find a way to do so, but this works nearly identically, as the person can still copy/paste points instead of manually writing them out<br>
-![help](https://user-images.githubusercontent.com/64282992/118578436-27f15880-b75a-11eb-8801-e3b7f708fe67.jpg)
-![output](https://user-images.githubusercontent.com/64282992/118311660-2e63a400-b4be-11eb-846a-5f05a8bb0b02.jpg)
+- Added a $search feature which uses Selenium to send the user the first google image of their search
+![help](https://user-images.githubusercontent.com/64282992/119019314-14690c00-b96b-11eb-906f-fe91ce013e50.jpg)
+![plot](https://user-images.githubusercontent.com/64282992/119019324-16cb6600-b96b-11eb-9b8a-a621a17c2f9c.jpg)
+![search](https://user-images.githubusercontent.com/64282992/119019334-192dc000-b96b-11eb-9863-00333e073db7.jpg)
+
