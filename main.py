@@ -10,8 +10,6 @@ import requests
 from bs4 import BeautifulSoup as BS
 import json
 
-server_emotes = {'erina': 'https://cdn.discordapp.com/emojis/844008124902014976.png?v=1'}
-
 client = commands.Bot(command_prefix='$')
 client.remove_command('help')
 
@@ -45,12 +43,6 @@ async def on_message(message):
     read_points(message)
     main() # executes convex hull algorithm
     await message.channel.send(file=discord.File('out.png'))
-  
-  #if 'erina' in message.content:
-  #  await message.channel.send(server_emotes['erina'])
-
-  #if msg.startswith('nice') or ' nice' in message.content:
-  #  await message.add_reaction('👍')
   
   await client.process_commands(message)
 
