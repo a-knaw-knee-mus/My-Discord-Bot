@@ -10,6 +10,8 @@ import requests
 from bs4 import BeautifulSoup as BS
 import json
 
+server_emotes = {'erina': 'https://cdn.discordapp.com/emojis/844008124902014976.png?v=1'}
+
 client = commands.Bot(command_prefix='$')
 client.remove_command('help')
 
@@ -27,7 +29,6 @@ def read_points(message):
       pass
   f.close()
 
-
 @client.event
 async def on_ready():
   await client.change_presence(activity=discord.Game('$help'))
@@ -44,6 +45,12 @@ async def on_message(message):
     read_points(message)
     main() # executes convex hull algorithm
     await message.channel.send(file=discord.File('out.png'))
+  
+  #if 'erina' in message.content:
+  #  await message.channel.send(server_emotes['erina'])
+
+  #if msg.startswith('nice') or ' nice' in message.content:
+  #  await message.add_reaction('👍')
   
   await client.process_commands(message)
 
@@ -92,70 +99,81 @@ async def search(ctx, *, arg):
   driver.close()
   await ctx.send(file=discord.File('search.png'))
 
-
 @client.command()
 async def chess(ctx, *, arg):
   text = arg.split(' ')
-  try:
-    game_mode = 'rapid' # default gamemode if the user doesn't specify one
-    try:
-      if text[1].lower() == 'rapid' or text[1].lower() == 'blitz' or text[1].lower() == 'bullet':
-        game_mode = text[1]
-      else:
-        await ctx.send('That gamemode does not exist so this data is for the rapid gamemode.')
-    except:
-      pass
-    url = 'https://www.chess.com/stats/live/' + game_mode + '/' + text[0]
-    r = requests.get(url)
-    soup = BS(r.text, 'html.parser')
-    results = soup.find_all('script')
 
-    # Retrieves the player's profile picture
-    icon = soup.find('img')
-    player_profile = icon['src']
+  # Error check the username
+  acceptable_url = 'https://www.chess.com/member/' + text[0]
+  r = requests.get(acceptable_url)
+  if r.status_code != 200:
+    await ctx.send("No chess.com user with that username.")
+    return
+  
+  # Error check the gamemode
+  game_mode = 'rapid' # default gamemode if the user doesn't specify one=
+  if len(text) == 1:
+    await ctx.send('No gamemode was specified so this data is for the rapid gamemode.')
+  elif text[1].lower() == 'rapid' or text[1].lower() == 'blitz' or text[1].lower() == 'bullet':
+    game_mode = text[1]
+  else:
+    await ctx.send('That gamemode does not exist so this data is for the rapid gamemode.')
 
-    # Converts the dictionary in the source code to a useable format
-    data = ''.join(results[-1].contents)
-    data = ''.join(data.split())
-    data = data.partition('.stats=')[2]
-    data = data.partition(',ratings')[0] + '}'
-    data = data.replace("chartData", "\"chartData\"")
-    data = data.replace("userData", "\"userData\"")
-    data = json.loads(data)
+  # Retrieves the source code of the website
+  url = 'https://www.chess.com/stats/live/' + game_mode + '/' + text[0]
+  r = requests.get(url)
+  soup = BS(r.text, 'html.parser')
+  results = soup.find_all('script')
 
-    # Create the embed to send to the server
-    chessEmbed = discord.Embed(color=0x42ba06)
-    chessEmbed.set_author(name=f'{text[0]}\'s stats for {game_mode}', icon_url='https://bit.ly/3wjtIDE')
-    chessEmbed.set_thumbnail(url=player_profile)
-    highestRatingTime = re.sub("[A-Za-z]+", lambda ele: " " + ele[0] + " ", data['userData']['highestRating']['time'])
-    highestRatingTime = re.sub(r'(?<=,)', r' ', highestRatingTime)
-    ratings_desc = (f"Their rating: {data['userData']['rating']}\n"
-                    f"Highest rating: {data['userData']['highestRating']['rating']} achieved on {highestRatingTime}\n")
-    chessEmbed.add_field(name="USER RATINGS", value=ratings_desc, inline=False)
-    total_games = int(data['chartData']['black']['games']) + int(data['chartData']['white']['games'])
-    all_games_desc = (f"{total_games} - Total games\n"
-                      f"{data['chartData']['all']['wins']} - Wins\n"
-                      f"{data['chartData']['all']['losses']} - Losses\n"
-                      f"{data['chartData']['all']['draws']} - Draws")
-    chessEmbed.add_field(name="ALL GAMES", value=all_games_desc, inline=True)
-    white_games_desc = (f"{data['chartData']['white']['games']} - Total games\n"
-                        f"{data['chartData']['white']['wins']} - Wins\n"
-                        f"{data['chartData']['white']['losses']} - Losses\n"
-                        f"{data['chartData']['white']['draws']} - Draws")
-    chessEmbed.add_field(name="WHITE GAMES", value=white_games_desc, inline=True)   
-    black_games_desc = (f"{data['chartData']['black']['games']} - Total games\n"
-                        f"{data['chartData']['black']['wins']} - Wins\n"
-                        f"{data['chartData']['black']['losses']} - Losses\n"
-                        f"{data['chartData']['black']['draws']} - Draws")           
-    chessEmbed.add_field(name="BLACK GAMES", value=black_games_desc, inline=True)   
-    friends_opponents_desc = (f"Rank among their friends: {data['userData']['friendRank']}\n"
-                              f"Percentile: {data['userData']['percentile']}%\n"
-                              f"Highest win streak: {data['userData']['winningStreak']}\n"
-                              f"Best win: {data['userData']['bestWin']['rating']} against {data['userData']['bestWin']['player']}") 
-    chessEmbed.add_field(name="FRIEND/OPPONENT STATS", value=friends_opponents_desc, inline=False)
-    await ctx.send(embed=chessEmbed)
-  except: 
-    await ctx.send("No chess.com user with that username.") 
+  # retrieves the player's profile picture
+  icon = soup.find('img')
+  player_profile = icon['src']
+
+  # Converts the dictionary in the source code to a useable format
+  data = ''.join(results[-1].contents) # The dict in the source code is in the last <script>
+  data = ''.join(data.split())
+  data = data.partition('.stats=')[2]
+  data = data.partition(',ratings')[0] + '}'
+  data = data.replace("chartData", "\"chartData\"")
+  data = data.replace("userData", "\"userData\"")
+  data = json.loads(data)
+
+  # Create the embed to send to the user
+  chessEmbed = discord.Embed(color=0x6c9d41)
+  chessEmbed.set_author(name=f'{text[0]}\'s stats for {game_mode}', icon_url='https://bit.ly/3wjtIDE')
+  chessEmbed.set_thumbnail(url=player_profile)
+
+  highestRatingTime = re.sub("[A-Za-z]+", lambda ele: " " + ele[0] + " ", data['userData']['highestRating']['time'])
+  highestRatingTime = re.sub(r'(?<=,)', r' ', highestRatingTime)
+  ratings_desc = (f"Their rating: {data['userData']['rating']}\n"
+                  f"Highest rating: {data['userData']['highestRating']['rating']} achieved on {highestRatingTime}\n")
+  chessEmbed.add_field(name="USER RATINGS", value=ratings_desc, inline=False)
+
+  total_games = int(data['chartData']['black']['games']) + int(data['chartData']['white']['games'])
+  all_games_desc = (f"{total_games} - Total games\n"
+                    f"{data['chartData']['all']['wins']} - Wins\n"
+                    f"{data['chartData']['all']['losses']} - Losses\n"
+                    f"{data['chartData']['all']['draws']} - Draws")
+  chessEmbed.add_field(name="ALL GAMES", value=all_games_desc, inline=True)
+
+  white_games_desc = (f"{data['chartData']['white']['games']} - Total games\n"
+                      f"{data['chartData']['white']['wins']} - Wins\n"
+                      f"{data['chartData']['white']['losses']} - Losses\n"
+                      f"{data['chartData']['white']['draws']} - Draws")
+  chessEmbed.add_field(name="WHITE GAMES", value=white_games_desc, inline=True) 
+
+  black_games_desc = (f"{data['chartData']['black']['games']} - Total games\n"
+                      f"{data['chartData']['black']['wins']} - Wins\n"
+                      f"{data['chartData']['black']['losses']} - Losses\n"
+                      f"{data['chartData']['black']['draws']} - Draws")           
+  chessEmbed.add_field(name="BLACK GAMES", value=black_games_desc, inline=True)   
+
+  friends_opponents_desc = (f"Rank among their friends: {data['userData']['friendRank']}\n"
+                            f"Percentile: {data['userData']['percentile']}%\n"
+                            f"Highest win streak: {data['userData']['winningStreak']}\n"
+                            f"Best win: {data['userData']['bestWin']['rating']} against {data['userData']['bestWin']['player']}") 
+  chessEmbed.add_field(name="FRIEND/OPPONENT STATS", value=friends_opponents_desc, inline=False)
+  await ctx.send(embed=chessEmbed)
 
 keep_alive()
 client.run(os.getenv('TOKEN'))
