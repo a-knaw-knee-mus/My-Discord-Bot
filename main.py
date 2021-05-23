@@ -160,7 +160,9 @@ async def chess(ctx, *, arg):
                       f"{data['chartData']['black']['draws']} - Draws")           
   chessEmbed.add_field(name="BLACK GAMES", value=black_games_desc, inline=True)   
 
-  friends_opponents_desc = (f"Rank among their friends: {data['userData']['friendRank']}\n"
+  friends_opponents_desc = (f"Leaderboard Rank: {data['userData']['leaderboardRank']}\n"
+                            f"Friend count: {data['userData']['friendCount']}\n"
+                            f"Rank among their friends: {data['userData']['friendRank']}\n"
                             f"Percentile: {data['userData']['percentile']}%\n"
                             f"Highest win streak: {data['userData']['winningStreak']}\n"
                             f"Best win: {data['userData']['bestWin']['rating']} against {data['userData']['bestWin']['player']}") 
