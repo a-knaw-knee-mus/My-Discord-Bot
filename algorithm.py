@@ -120,14 +120,10 @@ def plot(input_list, convex_hull, perm, total_area):  # visually plot the points
     plt.title('Convex Hull\nPerimeter of %.2f units\n Area of %.1f units^2' % (perm, total_area))
     plt.savefig("out.png", bbox_inches='tight', dpi=100)
 
-def main():
-  file = open("data.txt", "r")
-  f = file.readlines()
-  inputList = []
-  for line in f:
-    row = list(map(int, line.split()))
-    if row not in inputList:
-      inputList.append(row)
+def main(points):
+  b = set()
+    inputList = [element for element in points
+                 if not (tuple(element) in b or b.add(tuple(element)))]
 
   sortedList = sort(inputList.copy())
   convexHull = create_hull(sortedList.copy())
