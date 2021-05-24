@@ -7,25 +7,24 @@ from keep_alive import keep_alive
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import requests
-from bs4 import BeautifulSoup as BS
+from bs4 import BeautifulSoup
 import json
 
 client = commands.Bot(command_prefix='$')
 client.remove_command('help')
 
 def read_points(message):
-  f = open('data.txt', 'w')  
-  vals = message.content.split("\n")
-  for item in vals:
-    item.strip()
-    point = re.split('\s+', item)
-    try:       
-      x = int(point[0])
-      y = int(point[1])
-      f.write(f'{x} {y}\n')
-    except:
-      pass
-  f.close()
+    vals = message.content.split("\n")
+    points = []
+    for item in vals:
+        point = re.split('\s+', item)
+        try:
+            x = int(point[0])
+            y = int(point[1])
+            points.append([x, y])
+        except:
+            pass
+    return points
 
 @client.event
 async def on_ready():
@@ -40,13 +39,12 @@ async def on_message(message):
   msg = message.content
 
   if msg.startswith("$plot"):
-    read_points(message)
-    main() # executes convex hull algorithm
+    main(read_points(message))  # executes convex hull algorithm
     await message.channel.send(file=discord.File('out.png'))
   
   await client.process_commands(message)
 
-@client.command(aliases=['rules'])
+@client.command()
 async def help(ctx):
   helpEmbed = discord.Embed(color=0xFF0000)
   helpEmbed.set_author(name='Help')
@@ -114,7 +112,7 @@ async def chess(ctx, *, arg):
   # Retrieves the source code of the website
   url = 'https://www.chess.com/stats/live/' + game_mode + '/' + text[0]
   r = requests.get(url)
-  soup = BS(r.text, 'html.parser')
+  soup = BeautifulSoup(r.text, 'html.parser')
   results = soup.find_all('script')
 
   # retrieves the player's profile picture
