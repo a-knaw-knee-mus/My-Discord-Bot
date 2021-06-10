@@ -1,4 +1,4 @@
-# My-Discord-Bot
+# My Discord Bot
 This is a discord bot I made using Python 3 and Replit to host it 24/7
 - All the functions of the bot can be learned through the '$help' command
 - The '$chess' command retrieves data from the desired user on chess.com for one of 3 gamemodes (rapid, blitz, bullet). There is also error-checking in case the user enters a non-existent username on chess.com, an invalid gamemode, or a missing gamemode. This was achieved using web-scraping and data-manipulation of the website source code.
