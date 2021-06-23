@@ -3,7 +3,6 @@ import discord
 from discord.ext import commands
 from discord_slash.utils.manage_commands import create_option, create_choice
 from algorithm import main
-import re
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import requests
@@ -23,7 +22,7 @@ def read_points(message):
     points = []
     for item in vals:
         item.strip()
-        point = re.split('\s+', item)
+        point = item.split()
         try:
             x = int(point[0])
             y = int(point[1])
