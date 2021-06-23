@@ -6,6 +6,7 @@ from algorithm import main
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import requests
+import re
 from bs4 import BeautifulSoup
 import json
 import os
