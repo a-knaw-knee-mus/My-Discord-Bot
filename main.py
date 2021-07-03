@@ -22,7 +22,6 @@ def read_points(message):
     vals = message.content.split("\n")
     points = []
     for item in vals:
-        item.strip()
         point = item.split()
         try:
             x = int(point[0])
@@ -199,7 +198,7 @@ async def on_message(message):
 
     if msg.startswith("$plot"):
         main(read_points(message))  # executes convex hull algorithm
-        await message.channel.send(file=discord.File('out.png'))
+        await message.reply(file=discord.File('out.png'), mention_author=False)
 
     if msg.startswith('nice') or ' nice' in msg:
         await message.add_reaction('👍')
