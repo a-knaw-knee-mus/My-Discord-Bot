@@ -3,15 +3,17 @@ import discord
 from discord.ext import commands
 from discord_slash.utils.manage_commands import create_option, create_choice
 from algorithm import main
+import re
+import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-import requests
-import re
 from bs4 import BeautifulSoup
 import json
 import os
 from discord_slash import SlashCommand, SlashContext
 import random
+
+guilds = []  # COPY PASTE YOUR SERVER ID(s) INTO THIS ARRAY AS INTEGERS
 
 client = commands.Bot(command_prefix='$')
 client.remove_command('help')
@@ -38,14 +40,15 @@ async def on_ready():
     print('Logged in as {0.user}'.format(client))
 
 
-@slash.slash(description='Shows the bot latency')
-async def ping(ctx):
+@slash.slash(name='ping', description='Shows the bot latency', guild_ids=guilds)
+async def _ping(ctx: SlashContext):
     await ctx.send(f'Bot speed = {round(client.latency * 1000)}ms')
 
 
 @slash.slash(
     name='search',
     description='Search the web for an image',
+    guild_ids=guilds,
     options=[
         create_option(
             name='name',
@@ -80,8 +83,34 @@ async def _search(ctx: SlashContext, name: str, index: int = 1):
 
 
 @slash.slash(
+    name='avatar',
+    description='Get the profile picture of the user',
+    guild_ids=guilds,
+    options=[
+        create_option(
+            name='username',
+            description='Name of the user',
+            required=False,
+            option_type=6
+        )
+    ]
+)
+async def _avatar(ctx, username=None):
+    try:
+        av = username.avatar_url
+        name = username
+    except:
+        av = ctx.author.avatar_url
+        name = ctx.author
+    av_embed = discord.Embed(title=f"{name}'s avatar", color=0xf5f542)
+    av_embed.set_image(url=av)
+    await ctx.send(embed=av_embed)
+
+
+@slash.slash(
     name='chess',
     description='Find stats on a player from chess.com',
+    guild_ids=guilds,
     options=[
         create_option(
             name='username',
@@ -166,34 +195,9 @@ async def _chess(ctx: SlashContext, username: str, gamemode: str):
                               f"Best win: {data['userData']['bestWin']['rating']} against {data['userData']['bestWin']['player']}")
     chessEmbed.add_field(name="FRIEND/OPPONENT STATS", value=friends_opponents_desc, inline=False)
     await ctx.send(embed=chessEmbed)
-    
-    
-@slash.slash(
-    name='avatar',
-    description='Get the profile picture of the user',
-    guild_ids=guilds,
-    options=[
-        create_option(
-            name='username',
-            description='Name of the user',
-            required=False,
-            option_type=6
-        )
-    ]
-)
-async def _avatar(ctx, username=None):
-    try:
-        av = username.avatar_url
-        name = username
-    except:
-        av = ctx.author.avatar_url
-        name = ctx.author
-    av_embed = discord.Embed(title=f"{name}'s avatar", color=0xf5f542)
-    av_embed.set_image(url=av)
-    await ctx.send(embed=av_embed)
 
 
-@slash.slash(name='help', description='Show the commands of the bot')
+@slash.slash(name='help', description='Show the commands of the bot', guild_ids=guilds)
 async def _help(ctx):
     helpEmbed = discord.Embed(color=0xFF0000)
     helpEmbed.set_author(name='Help')
