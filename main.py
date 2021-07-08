@@ -166,6 +166,31 @@ async def _chess(ctx: SlashContext, username: str, gamemode: str):
                               f"Best win: {data['userData']['bestWin']['rating']} against {data['userData']['bestWin']['player']}")
     chessEmbed.add_field(name="FRIEND/OPPONENT STATS", value=friends_opponents_desc, inline=False)
     await ctx.send(embed=chessEmbed)
+    
+    
+@slash.slash(
+    name='avatar',
+    description='Get the profile picture of the user',
+    guild_ids=guilds,
+    options=[
+        create_option(
+            name='username',
+            description='Name of the user',
+            required=False,
+            option_type=6
+        )
+    ]
+)
+async def _avatar(ctx, username=None):
+    try:
+        av = username.avatar_url
+        name = username
+    except:
+        av = ctx.author.avatar_url
+        name = ctx.author
+    av_embed = discord.Embed(title=f"{name}'s avatar", color=0xf5f542)
+    av_embed.set_image(url=av)
+    await ctx.send(embed=av_embed)
 
 
 @slash.slash(name='help', description='Show the commands of the bot')
@@ -186,6 +211,8 @@ async def _help(ctx):
                    "if you don't simply want the first image. The index is based off of Chromium's "
                    "Google Images and not necessarily your desired browser.")
     helpEmbed.add_field(name='GOOGLE IMAGES SEARCH', value=search_desc, inline=False)
+    avatar_desc = "Enter a username for their avatar or leave it empty for your own avatar."
+    helpEmbed.add_field(name='AVATAR VIEWER', value=avatar_desc, inline=False)
     await ctx.send(embed=helpEmbed)
 
 
