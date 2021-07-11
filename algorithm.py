@@ -11,15 +11,13 @@ def sort(array):  # sort in terms of CCW angle with start point
             if point[0] < start_point[0]:
                 start_point = point
 
-    i = 0
-    for point in array:  # remove the smallest point from list
+    for i, point in enumerate(array):  # remove the smallest point from list
         if point == start_point:
             array.pop(i)
-        i += 1
-
-    angle = []
-    for point in array:
-        angle.append(math.atan2(point[1] - start_point[1], point[0] - start_point[0]))
+    angle = [
+        math.atan2(point[1] - start_point[1], point[0] - start_point[0])
+        for point in array
+    ]
 
     sorted_list = [z for _, z in sorted(zip(angle, array))]  # sort the list in terms of its angle
     sorted_list.insert(0, start_point)
@@ -59,16 +57,11 @@ def create_hull(array):
 
 
 def find_perimeter(array):
-    i = 1
     prmtr = 0
-    for point in array:
+    for i, point in enumerate(array, start=1):
         point1 = point
-        if i == len(array):
-            point2 = array[0]
-        else:
-            point2 = array[i]
-        prmtr += math.sqrt((point2[0]-point1[0])**2 + (point2[1]-point1[1])**2)
-        i += 1
+        point2 = array[0] if i == len(array) else array[i]
+        prmtr += math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
     return prmtr
 
 
@@ -98,10 +91,9 @@ def plot(input_list, convex_hull, perm, total_area):  # visually plot the points
     plt.plot(x, y, 'ok')
 
     # create the outer perimeter
-    i = 1
     x_hull = []
     y_hull = []
-    for points in convex_hull:
+    for i, points in enumerate(convex_hull, start=1):
         x_hull.append(points[0])
         y_hull.append(points[1])
         if i == len(convex_hull):
@@ -115,7 +107,6 @@ def plot(input_list, convex_hull, perm, total_area):  # visually plot the points
             plt.text(i_x, i_y, '({}, {})'.format(i_x, i_y), font)
         x_hull.clear()
         y_hull.clear()
-        i += 1
 
     plt.title('Convex Hull\nPerimeter of %.2f units\n Area of %.1f units^2' % (perm, total_area))
     plt.savefig("out.png", bbox_inches='tight', dpi=100)
