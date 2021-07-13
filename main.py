@@ -13,8 +13,6 @@ import os
 from discord_slash import SlashCommand, SlashContext
 import random
 
-guilds = []  # COPY PASTE YOUR SERVER ID(s) INTO THIS ARRAY AS INTEGERS
-
 client = commands.Bot(command_prefix='$')
 client.remove_command('help')
 slash = SlashCommand(client, sync_commands=True)
@@ -40,7 +38,7 @@ async def on_ready():
     print('Logged in as {0.user}'.format(client))
 
 
-@slash.slash(name='ping', description='Shows the bot latency', guild_ids=guilds)
+@slash.slash(name='ping', description='Shows the bot latency')
 async def _ping(ctx: SlashContext):
     await ctx.send(f'Bot speed = {round(client.latency * 1000)}ms')
 
@@ -85,7 +83,6 @@ async def _search(ctx: SlashContext, name: str, index: int = 1):
 @slash.slash(
     name='avatar',
     description='Get the profile picture of the user',
-    guild_ids=guilds,
     options=[
         create_option(
             name='username',
@@ -110,7 +107,6 @@ async def _avatar(ctx, username=None):
 @slash.slash(
     name='chess',
     description='Find stats on a player from chess.com',
-    guild_ids=guilds,
     options=[
         create_option(
             name='username',
@@ -197,7 +193,7 @@ async def _chess(ctx: SlashContext, username: str, gamemode: str):
     await ctx.send(embed=chessEmbed)
 
 
-@slash.slash(name='help', description='Show the commands of the bot', guild_ids=guilds)
+@slash.slash(name='help', description='Show the commands of the bot')
 async def _help(ctx):
     helpEmbed = discord.Embed(color=0xFF0000)
     helpEmbed.set_author(name='Help')
