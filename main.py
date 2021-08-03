@@ -46,7 +46,6 @@ async def _ping(ctx: SlashContext):
 @slash.slash(
     name='search',
     description='Search the web for an image',
-    guild_ids=guilds,
     options=[
         create_option(
             name='name',
