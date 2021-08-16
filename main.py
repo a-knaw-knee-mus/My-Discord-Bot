@@ -141,6 +141,12 @@ async def _chess(ctx: SlashContext, username: str, gamemode: str):
     # retrieves the player's profile picture
     icon = soup.find('img')
     player_profile = icon['src']
+    
+    # The username with proper casing found in the source code
+    user = ''.join(results[-1].contents)
+    user = ''.join(user.split())
+    user = user.partition('username:\'')[2]
+    user = user.partition('\',leaderboardPath')[0]
 
     # Converts the dictionary in the source code to a usable format
     data = ''.join(results[-1].contents)  # The dict in the source code is in the last <script>
@@ -153,7 +159,7 @@ async def _chess(ctx: SlashContext, username: str, gamemode: str):
 
     # Create the embed to send to the user
     chessEmbed = discord.Embed(color=0x6c9d41)
-    chessEmbed.set_author(name=f'{username}\'s stats for {gamemode}', icon_url='https://bit.ly/3wjtIDE')
+    chessEmbed.set_author(name=f'{user}\'s stats for {gamemode.capitalize()}', icon_url='https://bit.ly/3wjtIDE')
     chessEmbed.set_thumbnail(url=player_profile)
 
     highestRatingTime = re.sub("[A-Za-z]+", lambda ele: " " + ele[0] + " ",
@@ -212,6 +218,7 @@ async def _help(ctx):
     helpEmbed.add_field(name='GOOGLE IMAGES SEARCH', value=search_desc, inline=False)
     avatar_desc = "Enter a username for their avatar or leave it empty for your own avatar."
     helpEmbed.add_field(name='AVATAR VIEWER', value=avatar_desc, inline=False)
+    chessEmbed.add_field(name='MORE INFO HERE', value=url, inline=False)
     await ctx.send(embed=helpEmbed)
 
 
