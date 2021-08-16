@@ -195,6 +195,7 @@ async def _chess(ctx: SlashContext, username: str, gamemode: str):
                               f"Highest win streak: {data['userData']['winningStreak']}\n"
                               f"Best win: {data['userData']['bestWin']['rating']} against {data['userData']['bestWin']['player']}")
     chessEmbed.add_field(name="FRIEND/OPPONENT STATS", value=friends_opponents_desc, inline=False)
+    chessEmbed.add_field(name='MORE INFO HERE', value=url, inline=False)
     await ctx.send(embed=chessEmbed)
 
 
@@ -218,7 +219,6 @@ async def _help(ctx):
     helpEmbed.add_field(name='GOOGLE IMAGES SEARCH', value=search_desc, inline=False)
     avatar_desc = "Enter a username for their avatar or leave it empty for your own avatar."
     helpEmbed.add_field(name='AVATAR VIEWER', value=avatar_desc, inline=False)
-    chessEmbed.add_field(name='MORE INFO HERE', value=url, inline=False)
     await ctx.send(embed=helpEmbed)
 
 
