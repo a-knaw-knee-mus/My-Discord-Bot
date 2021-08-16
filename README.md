@@ -5,4 +5,4 @@ This is a discord bot I made using Python 3 and Replit to host it 24/7
 - Most of my commands have migrated to slash commands except the $plot command since the user has to input a list of points, each on a new line
 
 
-### A demonstration of the bot https://youtu.be/zYX4hCvtUts
+### A demonstration of the bot https://youtu.be/zziHJa22KBs
