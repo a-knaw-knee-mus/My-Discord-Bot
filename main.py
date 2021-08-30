@@ -165,35 +165,36 @@ async def _chess(ctx: SlashContext, username: str, gamemode: str):
     highestRatingTime = re.sub("[A-Za-z]+", lambda ele: " " + ele[0] + " ",
                                data['userData']['highestRating']['time'])
     highestRatingTime = re.sub(r'(?<=,)', r' ', highestRatingTime)
-    ratings_desc = (f"Their rating: {data['userData']['rating']}\n"
-                    f"Highest rating: {data['userData']['highestRating']['rating']} achieved on {highestRatingTime}\n")
+    ratings_desc = (f"```Their rating:   {data['userData']['rating']}\n"
+                    f"Highest rating: {data['userData']['highestRating']['rating']} achieved on{highestRatingTime}\n"
+                    f"Avg Accuracy:   {data['userData']['accuracy']['average']}%```")
     chessEmbed.add_field(name="USER RATINGS", value=ratings_desc, inline=False)
 
     total_games = int(data['chartData']['black']['games']) + int(data['chartData']['white']['games'])
-    all_games_desc = (f"{total_games} - Total games\n"
-                      f"{data['chartData']['all']['wins']} - Wins\n"
-                      f"{data['chartData']['all']['losses']} - Losses\n"
-                      f"{data['chartData']['all']['draws']} - Draws")
+    all_games_desc = (f"```Total:  {total_games}\n"
+                      f"Wins:   {data['chartData']['all']['wins']}\n"
+                      f"Losses: {data['chartData']['all']['losses']}\n"
+                      f"Draws:  {data['chartData']['all']['draws']}```")
     chessEmbed.add_field(name="ALL GAMES", value=all_games_desc, inline=True)
 
-    white_games_desc = (f"{data['chartData']['white']['games']} - Total games\n"
-                        f"{data['chartData']['white']['wins']} - Wins\n"
-                        f"{data['chartData']['white']['losses']} - Losses\n"
-                        f"{data['chartData']['white']['draws']} - Draws")
+    white_games_desc = (f"```Total:  {data['chartData']['white']['games']}\n"
+                        f"Wins:   {data['chartData']['white']['wins']}\n"
+                        f"Losses: {data['chartData']['white']['losses']}\n"
+                        f"Draws:  {data['chartData']['white']['draws']}```")
     chessEmbed.add_field(name="WHITE GAMES", value=white_games_desc, inline=True)
 
-    black_games_desc = (f"{data['chartData']['black']['games']} - Total games\n"
-                        f"{data['chartData']['black']['wins']} - Wins\n"
-                        f"{data['chartData']['black']['losses']} - Losses\n"
-                        f"{data['chartData']['black']['draws']} - Draws")
+    black_games_desc = (f"```Total:  {data['chartData']['black']['games']}\n"
+                        f"Wins:   {data['chartData']['black']['wins']}\n"
+                        f"Losses: {data['chartData']['black']['losses']}\n"
+                        f"Draws:  {data['chartData']['black']['draws']}```")
     chessEmbed.add_field(name="BLACK GAMES", value=black_games_desc, inline=True)
 
-    friends_opponents_desc = (f"Leaderboard Rank: {data['userData']['leaderboardRank']}\n"
+    friends_opponents_desc = (f"```Leaderboard Rank: {data['userData']['leaderboardRank']}\n"
                               f"Friend count: {data['userData']['friendCount']}\n"
                               f"Rank among their friends: {data['userData']['friendRank']}\n"
                               f"Percentile: {data['userData']['percentile']}%\n"
                               f"Highest win streak: {data['userData']['winningStreak']}\n"
-                              f"Best win: {data['userData']['bestWin']['rating']} against {data['userData']['bestWin']['player']}")
+                              f"Best win: {data['userData']['bestWin']['rating']} against {data['userData']['bestWin']['player']}```")
     chessEmbed.add_field(name="FRIEND/OPPONENT STATS", value=friends_opponents_desc, inline=False)
     chessEmbed.add_field(name='MORE INFO HERE', value=url, inline=False)
     await ctx.send(embed=chessEmbed)
