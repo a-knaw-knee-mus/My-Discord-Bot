@@ -152,7 +152,7 @@ async def _chess(ctx: SlashContext, username: str, gamemode: str):
     data = ''.join(results[-1].contents)  # The dict in the source code is in the last <script>
     data = ''.join(data.split())
     data = data.partition('.stats=')[2]
-    data = data.partition(',ratings')[0] + '}'
+    data = data.partition(',days')[0] + '}'
     data = data.replace("chartData", "\"chartData\"")
     data = data.replace("userData", "\"userData\"")
     data = json.loads(data)
